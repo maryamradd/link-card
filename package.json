@@ -1,19 +1,27 @@
 {
   "name": "link-card",
   "version": "1.0.0",
-  "description": "link card app",
-  "main": "app.js",
+  "description": "",
+  "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.28",
     "nodemon": "^2.0.4"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maryamradd/link-card.git"
+  },
+  "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maryamradd/link-card/issues"
+  },
+  "homepage": "https://github.com/maryamradd/link-card#readme"
 }
