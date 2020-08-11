@@ -4,10 +4,14 @@
   "description": "link card app",
   "main": "app.js",
   "dependencies": {
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.28",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^6.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
