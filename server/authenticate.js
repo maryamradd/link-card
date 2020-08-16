@@ -45,4 +45,4 @@ exports.jwtPassport = passport.use(
 //local authentication strategy
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 
-//exports.verifyUser = passport.authenticate("jwt", {session: false});
+exports.verifyUser = passport.authenticate("jwt", {session: false});

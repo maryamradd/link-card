@@ -65,6 +65,16 @@ router.get(
   }
 );
 
+//react state mangmnt //
+
+router.get(
+  "/loggedIn",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    res.status(200).json({isAuthenticated: true, user: req.user});
+  }
+);
+
 // USER CARD //
 
 router.get("/:username", (req, res) => {
