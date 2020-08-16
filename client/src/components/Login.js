@@ -1,40 +1,30 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useContext} from "react";
 import {Link} from "react-router-dom";
 import AuthService from "./AuthService";
+import {AuthContext} from "./AuthContext";
 import Message from "./Message";
 
-const Signup = (props) => {
+const Login = (props) => {
   const [user, setUser] = useState({username: "", password: ""});
   const [message, setMessage] = useState(null);
-  var timerId = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, []);
+  const authContext = useContext(AuthContext);
 
   const onSubmit = (e) => {
     e.preventDefault();
-    AuthService.signup(user).then((data) => {
-      const message = data;
-      setMessage(message);
-      resetForm();
-      //if no error show info msg then redirect to login page
-      if (!message.msgError) {
-        timerId = setTimeout(() => {
-          props.history.push("/login");
-        }, 3000);
+    AuthService.login(user).then((data) => {
+      const {isAuthnticated, user, message} = data;
+      if (isAuthnticated) {
+        authContext.setUser(user);
+        authContext.setIsAuthnticated(isAuthnticated);
+        props.history.push("/profile");
+      } else {
+        setMessage(message);
       }
     });
   };
 
   const onChange = (e) => {
     setUser({...user, [e.target.name]: e.target.value});
-  };
-
-  const resetForm = () => {
-    setUser({username: "", password: ""});
   };
 
   return (
@@ -47,16 +37,15 @@ const Signup = (props) => {
             alt="Workflow"
           />
           <h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
-            Create a new account
+            Log in to your account
           </h2>
           <p className="mt-2 text-center text-sm leading-5 text-gray-600">
-            Or if you already have an account
+            Or if you don't have an account
             <Link
-              to="/login"
+              to="/signup"
               className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
             >
-              {" "}
-              Log in
+              Signup
             </Link>
           </p>
         </div>
@@ -98,7 +87,31 @@ const Signup = (props) => {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between"></div>
+          <div className="mt-6 flex items-center justify-between">
+            {/* <div className="flex items-center">
+              <input
+                id="remember_me"
+                type="checkbox"
+                onChange={onChange}
+                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+              />
+              <label
+                htmlFor="remember_me"
+                className="ml-2 block text-sm leading-5 text-gray-900"
+              >
+                Remember me
+              </label>
+            </div> */}
+            {/*
+            <div className="text-sm leading-5">
+               <a
+                href="#"
+                className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+              >
+                Forgot your password?
+              </a> 
+            </div>*/}
+          </div>
 
           <div className="mt-6">
             <button
@@ -118,7 +131,7 @@ const Signup = (props) => {
                   />
                 </svg>
               </span>
-              Sign up
+              Log in
             </button>
           </div>
         </form>
@@ -127,4 +140,4 @@ const Signup = (props) => {
     </div>
   );
 };
-export default Signup;
+export default Login;
