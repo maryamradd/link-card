@@ -5,7 +5,7 @@ import AuthContext from "./AuthContext";
 
 const NavBar = () => {
   // const {isAuthenticated} = useContext(AuthContext);
-  var isAuthenticated = false;
+  var isAuthenticated = true;
   const unauthnticatedNavbar = () => {
     return (
       <>
@@ -160,21 +160,21 @@ const NavBar = () => {
               </div>
               <nav className="hidden md:flex space-x-10">
                 <Link
-                  to="Edit"
+                  to="/profile"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
                 >
-                  Edit
+                  Profile
                 </Link>
 
                 <Link
-                  to="Edit"
+                  to="/links"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
                 >
-                  Preview
+                  Links
                 </Link>
 
                 <Link
-                  to="Edit"
+                  to="/settings"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
                 >
                   Settings
@@ -255,22 +255,22 @@ const NavBar = () => {
                 <div className="py-6 px-5 space-y-6">
                   <div className="grid grid-cols-2 row-gap-4 col-gap-8">
                     <Link
-                      to="/"
+                      to="/profile"
                       className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
                     >
-                      Edit
+                      Profile
                     </Link>
                     <Link
-                      to="/"
+                      to="/links"
                       className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
                     >
-                      Edit
+                      Links
                     </Link>
                     <Link
-                      to="/"
+                      to="/settings"
                       className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
                     >
-                      Edit
+                      Settings
                     </Link>
                   </div>
                   <div className="space-y-6">
