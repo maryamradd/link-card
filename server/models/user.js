@@ -2,21 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose");
 
-const linkSchema = new Schema({
-  url: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  logo: {
-    type: String,
-    default: "",
-  },
-});
-
 const userSchema = new Schema(
   {
     /*username: {
@@ -38,7 +23,7 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
-    links: [linkSchema],
+    links: [{type: mongoose.Schema.Types.ObjectId, ref: "Link"}],
   },
   {timestamps: true}
 );
