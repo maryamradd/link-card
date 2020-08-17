@@ -25,6 +25,5 @@ app.listen(5000, () => {
 });
 
 app.use("/", userRouter);
-app.use("/dashboard", dashboardRouter);
 
 module.exports = app;

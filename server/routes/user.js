@@ -4,6 +4,7 @@ const passport = require("passport");
 const router = express.Router();
 const authenticate = require("../authenticate");
 const User = require("../models/user");
+const Link = require("../models/link");
 
 router.get("/", (req, res) => {
   console.log("///");
@@ -65,17 +66,7 @@ router.get(
   }
 );
 
-//react state mangmnt //
-
-router.get(
-  "/loggedIn",
-  passport.authenticate("jwt", {session: false}),
-  (req, res) => {
-    res.status(200).json({isAuthenticated: true, user: req.user});
-  }
-);
-
-// USER CARD //
+// SHAREABLE USER CARD //
 
 router.get("/:username", (req, res) => {
   const username = req.params.username;
@@ -88,5 +79,68 @@ router.get("/:username", (req, res) => {
       res.status(400).json({message: {msgBody: err, msgError: true}})
     );
 });
+
+// ADD NEW LINK //
+
+router.post(
+  "/add",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    const link = new Link(req.body);
+    link.save((err) => {
+      if (err)
+        res
+          .status(500)
+          .json({message: {msgBody: "Error has occured!", msgError: true}});
+      else {
+        req.user.links.push(link);
+        req.user.save((err) => {
+          if (err)
+            res
+              .status(500)
+              .json({message: {msgBody: "Error has occured!", msgError: true}});
+          else
+            res.status(200).json({
+              message: {
+                msgBody: "Link created successfully!",
+                msgError: false,
+              },
+            });
+        });
+      }
+    });
+  }
+);
+
+// RETRIVE USER LINKS
+
+router.get(
+  "/links",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    User.findOne({_id: req.user._id})
+      .populate("links")
+      .exec((err, document) => {
+        if (err)
+          res
+            .status(500)
+            .json({message: {msgBody: "Error has occured!", msgError: true}});
+        else {
+          res.status(200).json({links: document.links, authenticated: true});
+        }
+      });
+  }
+);
+
+//react state mangmnt //
+
+userRouter.get(
+  "/loggedIn",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    const {username} = req.user;
+    res.status(200).json({isAuthenticated: true, user: {username}});
+  }
+);
 
 module.exports = router;
