@@ -9,6 +9,7 @@ import UserLinkCard from "./components/UserLinkCard";
 import Footer from "./components/Footer";
 import UserLinks from "./components/UserLinks";
 import LinkItem from "./components/LinkItem";
+import Profile from "./components/Profile";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/links" component={UserLinks} />
         <Route exact path="/add" component={AddLink} />
+
+        <Route exact path="/profile" component={Profile} />
         <Route path="/:username" component={UserLinkCard} />
       </Router>
       <Footer></Footer>

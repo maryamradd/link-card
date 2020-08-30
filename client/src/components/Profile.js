@@ -1,4 +1,4 @@
-import React, {Component, useState} from "react";
+import React, {useState} from "react";
 import reactCSS from "reactcss";
 import {SketchPicker} from "react-color";
 
@@ -11,6 +11,7 @@ const Profile = () => {
     b: "19",
     a: "1",
   });
+
   //Background color picker
   const [displayColorPickerBG, setDisplayColorPickerBG] = useState(false);
   const [colorBG, setColorBG] = useState({
@@ -107,13 +108,12 @@ const Profile = () => {
       <div className="min-h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
         <div className="max-w-md w-full">
           <div>
-            {" "}
             <h2 className="mt-8 text-center text-2xl leading-9 font-extrabold text-gray-900">
               nAME GOES HERE
             </h2>
           </div>
           <form
-            className="bg-white  rounded px-8 pt-6 pb-8 mb-4"
+            className="bg-white rounded px-8 pt-6 pb-8 mb-4"
             onSubmit={(event) => onSubmit(event)}
           >
             <div className="mb-4 items-center justify-center text-center ">
@@ -128,7 +128,7 @@ const Profile = () => {
               <img
                 className="-ml-1  border-2 border-dotted p-1 inline-block h-24 w-24 rounded-full text-white shadow-solid"
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
+                alt="user profile picture"
                 onChange={(event) => onChange(event)}
               />
             </div>
