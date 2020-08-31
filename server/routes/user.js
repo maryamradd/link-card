@@ -1,6 +1,6 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const passport = require("passport");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 const authenticate = require("../authenticate");
 const User = require("../models/user");
@@ -12,48 +12,60 @@ router.get("/", (req, res) => {
 
 // SIGNUP //
 
-router.post("/signup", (req, res) => {
-  // convenient method to register a new user instance with a given password + Checks if username is unique
-  User.register(
-    new User({username: req.body.username}),
-    req.body.password,
-    (err, user) => {
-      if (err) {
-        res.status(500).json({message: {msgBody: err, msgError: true}});
-      } else {
-        //save and authenticate
-        user.save((err, user) => {
-          if (err) {
-            res.status(500).json({message: {msgBody: err, msgError: true}});
-            return;
-          }
-          passport.authenticate("local")(req, res, () => {
-            res.status(200).json({
-              message: {msgBody: "Registration Successful!", msgError: false},
-            });
-          });
-        });
-      }
-    }
-  );
+router.post("/signup", async (req, res) => {
+  const {username, password} = req.body;
+
+  // check if username already registred
+  const existingUser = await User.findOne({username: username});
+  if (existingUser) {
+    return res.status(400).json({
+      message: {
+        msgBody: "an account with this username already exists",
+        msgError: true,
+      },
+    });
+  }
+
+  // to register a new user:
+  // hash the password --> create a new user record --> store in db
+
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(password, salt);
+
+  // create new user with the hashed password
+  const newUser = new User({username, password: passwordHash});
+
+  // store new user in db
+  const savedUser = await newUser.save((err) => {
+    if (err)
+      res
+        .status(500)
+        .json({message: {msgBody: "an error has occured", msgError: true}});
+    else
+      res.status(201).json({
+        message: {msgBody: "account successfully created", msgError: false},
+      });
+  });
+
+  // create jwt token
+  var token = authenticate.getToken({_id: savedUser._id});
+  // set cookie with token
+  res.cookie("access_token", token, {httpOnly: true, sameSite: true});
 });
 
 // LOGIN //
 
-router.post(
-  "/login",
-  passport.authenticate("local", {session: false}),
-  (req, res) => {
-    if (req.isAuthenticated()) {
-      //create jwt token
-      var token = authenticate.getToken({_id: req.user._id});
-      // set cookie with token
-      res.cookie("access_token", token, {httpOnly: true, sameSite: true});
-      res.status(200).json({isAuthenticated: true, user: req.user.username});
-      //redirect to dashboard
-    }
+router.post("/login", authenticate.verifyUserLocal, async (req, res) => {
+  if (req.isAuthenticated()) {
+    //create jwt token
+    var token = authenticate.getToken({_id: req.user._id});
+    // set cookie with token
+    res.cookie("access_token", token, {httpOnly: true, sameSite: true});
+    res.status(200).json({isAuthenticated: true, user: req.user.username});
+    //redirect somewhere
+  } else {
   }
-);
+});
 
 // LOGOUT //
 
@@ -86,6 +98,7 @@ router.post(
   "/add",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
+    console.log("lllkluokjouykoykuyjo");
     const link = new Link(req.body);
     link.save((err) => {
       if (err)
@@ -134,12 +147,26 @@ router.get(
 
 //react state mangmnt //
 
-userRouter.get(
+router.get(
   "/loggedIn",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
-    const {username} = req.user;
-    res.status(200).json({isAuthenticated: true, user: {username}});
+    console.log("dsjfkjsdhfiuhsdiukjfhsd");
+    const username = req.user;
+    res.status(200).json({isAuthenticated: true, user: username});
+  }
+);
+
+router.get(
+  "/authenticated",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    console.log("sadasdas");
+    if (req.user == null) {
+      res.send("loooooool");
+    }
+    const username = req.user;
+    res.status(200).json({isAuthenticated: true, user: username});
   }
 );
 
