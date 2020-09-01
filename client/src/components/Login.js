@@ -1,7 +1,7 @@
 import React, {useState, useContext} from "react";
 import {Link} from "react-router-dom";
-import AuthService from "./AuthService";
 import {AuthContext} from "./AuthContext";
+import AuthService from "./AuthService";
 import Message from "./Message";
 
 const Login = (props) => {
@@ -12,10 +12,12 @@ const Login = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     AuthService.login(user).then((data) => {
-      const {isAuthnticated, user, message} = data;
-      if (isAuthnticated) {
+      console.log(data);
+      const {user, isAuthenticated, message} = data;
+      if (isAuthenticated) {
+        console.log(user);
         authContext.setUser(user);
-        authContext.setIsAuthnticated(isAuthnticated);
+        authContext.setIsAuthenticated(isAuthenticated);
         props.history.push("/profile");
       } else {
         setMessage(message);
@@ -45,6 +47,7 @@ const Login = (props) => {
               to="/signup"
               className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
             >
+              {" "}
               Signup
             </Link>
           </p>
@@ -125,9 +128,9 @@ const Login = (props) => {
                   viewBox="0 0 20 20"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
               </span>

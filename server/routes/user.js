@@ -10,6 +10,15 @@ router.get("/", (req, res) => {
   console.log("///");
 });
 
+router.get(
+  "/authenticated",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    const {username} = req.user;
+    res.status(200).json({isAuthenticated: true, user: {username}});
+  }
+);
+
 // SIGNUP //
 
 router.post("/signup", async (req, res) => {
@@ -147,7 +156,7 @@ router.get(
 
 //react state mangmnt //
 
-router.get(
+/* router.get(
   "/loggedIn",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
@@ -155,15 +164,14 @@ router.get(
     const username = req.user;
     res.status(200).json({isAuthenticated: true, user: username});
   }
-);
+); */
 
 router.get(
-  "/authenticated",
+  "/loggedIn",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
-    console.log("sadasdas");
     if (req.user == null) {
-      res.send("loooooool");
+      console.log("whaat");
     }
     const username = req.user;
     res.status(200).json({isAuthenticated: true, user: username});

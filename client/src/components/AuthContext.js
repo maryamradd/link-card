@@ -10,14 +10,12 @@ export default ({children}) => {
 
   useEffect(() => {
     AuthService.isAuthenticated().then((data) => {
-      console.log(data);
       setUser(data.user);
       setIsAuthenticated(data.isAuthenticated);
       setIsLoaded(true);
     });
   }, []);
-  console.log(isLoaded);
-  //if is loaded is not true render loading thingy
+
   return (
     <div>
       {!isLoaded ? (

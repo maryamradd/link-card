@@ -8,6 +8,7 @@ const Signup = (props) => {
   const [message, setMessage] = useState(null);
   var timerId = useRef(null);
 
+  //instead of compomnent didmount
   useEffect(() => {
     return () => {
       clearTimeout(timerId);
@@ -17,7 +18,7 @@ const Signup = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     AuthService.signup(user).then((data) => {
-      const message = data;
+      const {message} = data;
       setMessage(message);
       resetForm();
       //if no error show info msg then redirect to login page
@@ -60,7 +61,7 @@ const Signup = (props) => {
             </Link>
           </p>
         </div>
-        <form className="mt-8" onSubmit={(event) => onSubmit}>
+        <form className="mt-8" onSubmit={onSubmit}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm">
             <div>
@@ -69,7 +70,7 @@ const Signup = (props) => {
                 name="username"
                 type="text"
                 required
-                onChange={() => onChange}
+                onChange={onChange}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                 placeholder="Username"
               />
@@ -91,7 +92,7 @@ const Signup = (props) => {
                 name="password"
                 type="password"
                 required
-                onChange={() => onChange}
+                onChange={onChange}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                 placeholder="Password"
               />
@@ -112,9 +113,9 @@ const Signup = (props) => {
                   viewBox="0 0 20 20"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
               </span>

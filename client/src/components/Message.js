@@ -29,13 +29,13 @@ const infoMsg = (props) => {
   return (
     <>
       <div
-        class="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 my-2 rounded relative"
+        className="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 my-2 rounded relative"
         role="alert"
       >
-        <span class="block sm:inline">{props.message.msgBody}</span>
-        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+        <span className="block sm:inline">{props.message.msgBody}</span>
+        <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
           <svg
-            class="fill-current h-6 w-6 text-gray-500"
+            className="fill-current h-6 w-6 text-gray-500"
             role="button"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"

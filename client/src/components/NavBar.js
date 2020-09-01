@@ -1,12 +1,13 @@
-import React, {useContext, useState} from "react";
-import {Link} from "react-router-dom";
+import React, {useContext} from "react";
+import {Link, NavLink} from "react-router-dom";
 import AuthService from "./AuthService";
-import AuthContext from "./AuthContext";
-import Transition from "./Transition";
+import {AuthContext} from "./AuthContext";
 
-const NavBar = () => {
-  // const {isAuthenticated} = useContext(AuthContext);
-  var isAuthenticated = true;
+const NavBar = (props) => {
+  const {isAuthenticated, user, setIsAuthenticated, setUser} = useContext(
+    AuthContext
+  );
+  //var isAuthenticated = true;
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
 
@@ -56,7 +57,10 @@ const NavBar = () => {
                 </Link>
                 <span className="inline-flex rounded-md shadow-sm">
                   <Link to="/signup">
-                    <div className="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150">
+                    <div
+                      className="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium 
+                    rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150"
+                    >
                       Sign up
                     </div>
                   </Link>
@@ -133,6 +137,15 @@ const NavBar = () => {
     );
   };
 
+  const logoutHandler = () => {
+    AuthService.logout().then((data) => {
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(false);
+      }
+    });
+  };
+
   // Navbar that displays for logged in users
   const authenticatedNavbar = () => {
     return (
@@ -170,12 +183,13 @@ const NavBar = () => {
                 </button>
               </div>
               <nav className="hidden md:flex space-x-10">
-                <Link
+                <NavLink
                   to="/profile"
-                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
+                  activeClassName="bg-blue-700"
+                  className=" text-base leading-6 font-medium text-gray-500 hover:text-gray-200 focus:outline-none focus:text-red-900 transition ease-in-out duration-150"
                 >
                   Profile
-                </Link>
+                </NavLink>
 
                 <Link
                   to="/links"
@@ -220,14 +234,9 @@ const NavBar = () => {
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu"
+                      onClick={logoutHandler}
                     >
-                      <Link
-                        to="/logout"
-                        className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
-                        role="menuitem"
-                      >
-                        Log out
-                      </Link>
+                      Log out
                     </div>
                   </div>
                 </div>
