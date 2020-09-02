@@ -1,80 +1,60 @@
-import React, {Component} from "react";
+import React, {useState, useContext, useRef} from "react";
+import UserLinksService from "./UserLinksService";
+import {AuthContext} from "./AuthContext";
+import Message from "./Message";
+import * as iconDefs from "../assets/iconDefs";
 import FontIconPicker from "@fonticonpicker/react-fonticonpicker";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.base-theme.react.css";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.material-theme.react.css";
 
 const AddLink = () => {
-  const icons = {
-    "Users & People": [
-      "fab fa-accessible-icon",
-      "fas fa-address-book",
-      "far fa-address-book",
-      "fas fa-address-card",
-      "far fa-address-card",
-      "fas fa-bed",
-      "fas fa-blind",
-      "fas fa-child",
-      "fas fa-female",
-      "fas fa-frown",
-      "far fa-frown",
-      "fas fa-id-badge",
-      "far fa-id-badge",
-      "fas fa-id-card",
-      "far fa-id-card",
-      "fas fa-male",
-      "fas fa-meh",
-      "far fa-meh",
-      "fas fa-power-off",
-      "fas fa-smile",
-      "far fa-smile",
-      "fas fa-street-view",
-      "fas fa-user",
-      "far fa-user",
-      "fas fa-user-circle",
-      "far fa-user-circle",
-      "fas fa-user-md",
-      "fas fa-user-plus",
-      "fas fa-user-secret",
-      "fas fa-user-times",
-      "fas fa-users",
-      "fas fa-wheelchair",
-    ],
-    Vehicles: [
-      "fab fa-accessible-icon",
-      "fas fa-ambulance",
-      "fas fa-bicycle",
-      "fas fa-bus",
-      "fas fa-car",
-      "fas fa-fighter-jet",
-      "fas fa-motorcycle",
-      "fas fa-paper-plane",
-      "far fa-paper-plane",
-      "fas fa-plane",
-      "fas fa-rocket",
-      "fas fa-ship",
-      "fas fa-shopping-cart",
-      "fas fa-space-shuttle",
-      "fas fa-subway",
-      "fas fa-taxi",
-      "fas fa-train",
-      "fas fa-truck",
-      "fas fa-wheelchair",
-    ],
-  };
-  const props = {
-    theme: "bluegrey",
-    renderUsing: "className",
-    isMulti: false,
-  };
+  const [link, setLink] = useState({url: "", title: "", icon: ""});
+  const [message, setMessage] = useState(null);
+
+  const authContext = useContext(AuthContext);
+  //var timerId = useRef(null);
 
   const onSubmit = (e) => {
-    console.log("fds");
+    e.preventDefault();
+    UserLinksService.createLink(link).then((data) => {
+      console.log(data);
+      const message = data;
+      if (!message.msgError) {
+        setMessage(message);
+        //redirect to links page
+        /*    timerId = setTimeout(() => {
+          props.history.push("/links");
+        }, 3000); */
+      } else if (message.msgBody === "unauth") {
+        //maybe jwt expired or smthn
+        console.log(message);
+        setMessage(message);
+
+        authContext.setUser({username: ""});
+        authContext.setIsAuthenticated(false);
+        /*    timerId = setTimeout(() => {
+          props.history.push("/");
+        }, 3000); */
+      } else {
+        setMessage(message);
+      }
+    });
   };
 
   const onChange = (e) => {
-    console.log(e);
+    const {name, value} = e.target;
+    setLink((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
+  const iconOnChange = (e) => {
+    setLink((prevState) => ({
+      ...prevState,
+      icon: e,
+    }));
+  };
   return (
     <>
       <div className="min-h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
@@ -100,6 +80,8 @@ const AddLink = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="url"
                 type="url"
+                name="url"
+                value={link.url}
                 placeholder="e.g. https://twitter.com/username"
                 onChange={onChange}
               />
@@ -115,6 +97,8 @@ const AddLink = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="description"
                 type="text"
+                name="title"
+                value={link.title}
                 placeholder="e.g. my twitter"
                 onChange={onChange}
               />
@@ -127,10 +111,12 @@ const AddLink = () => {
                 Icon
               </label>
               <FontIconPicker
-                icons={icons}
-                value="fas fa-truck"
+                icons={iconDefs.fontAwesome}
                 id="icon"
-                onChange={onChange}
+                name="icon"
+                value={link.icon}
+                isMulti={false}
+                onChange={iconOnChange}
               />
             </div>
 
@@ -143,6 +129,8 @@ const AddLink = () => {
               </button>
             </div>
           </form>
+
+          {message ? <Message message={message}></Message> : null}
         </div>
       </div>
     </>
