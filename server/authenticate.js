@@ -52,10 +52,12 @@ const opts = {
   secretOrKey: process.env.JWT_SECRET,
 };
 
+console.log(opts);
+
 exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     //check if user exists
-    User.findOne({id: jwt_payload.sub}, (err, user) => {
+    User.findOne({_id: jwt_payload._id}, (err, user) => {
       if (err) {
         return done(err, false);
       }
@@ -69,9 +71,10 @@ exports.jwtPassport = passport.use(
   })
 );
 
-exports.verifyUserLocal = passport.authenticate("local", {
+/* exports.verifyUserLocal = passport.authenticate("local", {
   session: false,
   // successRedirect: "/",
 });
 
 exports.verifyUser = passport.authenticate("jwt", {session: false});
+ */

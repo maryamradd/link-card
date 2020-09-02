@@ -19,6 +19,24 @@ router.get(
   }
 );
 
+router.get(
+  "/links",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    User.findById({_id: req.user._id})
+      .populate("links")
+      .exec((err, document) => {
+        if (err)
+          res
+            .status(500)
+            .json({message: {msgBody: "Error has occured", msgError: true}});
+        else {
+          res.status(200).json({links: document.links, authenticated: true});
+        }
+      });
+  }
+);
+
 // SIGNUP //
 
 router.post("/signup", async (req, res) => {
@@ -64,17 +82,20 @@ router.post("/signup", async (req, res) => {
 
 // LOGIN //
 
-router.post("/login", authenticate.verifyUserLocal, async (req, res) => {
-  if (req.isAuthenticated()) {
-    //create jwt token
-    var token = authenticate.getToken({_id: req.user._id});
-    // set cookie with token
-    res.cookie("access_token", token, {httpOnly: true, sameSite: true});
-    res.status(200).json({isAuthenticated: true, user: req.user.username});
-    //redirect somewhere
-  } else {
+router.post(
+  "/login",
+  passport.authenticate("local", {session: false}),
+  async (req, res) => {
+    if (req.isAuthenticated()) {
+      //create jwt token
+      var token = authenticate.getToken({_id: req.user._id});
+      // set cookie with token
+      res.cookie("access_token", token, {httpOnly: true, sameSite: true});
+      res.status(200).json({isAuthenticated: true, user: req.user.username});
+      //redirect somewhere
+    }
   }
-});
+);
 
 // LOGOUT //
 
@@ -104,10 +125,9 @@ router.get("/:username", (req, res) => {
 // ADD NEW LINK //
 
 router.post(
-  "/add",
+  "/addLink",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
-    console.log("lllkluokjouykoykuyjo");
     const link = new Link(req.body);
     link.save((err) => {
       if (err)
@@ -115,6 +135,8 @@ router.post(
           .status(500)
           .json({message: {msgBody: "Error has occured!", msgError: true}});
       else {
+        console.log(req.user);
+        console.log(req.user.links);
         req.user.links.push(link);
         req.user.save((err) => {
           if (err)
@@ -136,7 +158,7 @@ router.post(
 
 // RETRIVE USER LINKS
 
-router.get(
+/* router.get(
   "/links",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
@@ -148,11 +170,11 @@ router.get(
             .status(500)
             .json({message: {msgBody: "Error has occured!", msgError: true}});
         else {
-          res.status(200).json({links: document.links, authenticated: true});
+          res.status(200).json({isAuthenticated: true, links: document.links});
         }
       });
   }
-);
+); */
 
 //react state mangmnt //
 
