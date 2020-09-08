@@ -1,40 +1,60 @@
-import React, {useState} from "react";
+import React, {useState, useContext, useEffect} from "react";
+import {AuthContext} from "./AuthContext";
+import Message from "./Message";
+import ProfileService from "./ProfileService";
 import reactCSS from "reactcss";
 import {SketchPicker} from "react-color";
 
+import AvatarModal from "./AvatarModal";
+
 const Profile = () => {
+  const [profile, setProfile] = useState({
+    displayName: "",
+    bio: "",
+    primaryColor: "",
+    backgroundColor: "",
+  });
+  const [message, setMessage] = useState(null);
+  //modal handlers
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = (e) => {
+    console.log("dsfsdf");
+    setShowModal(true);
+  };
+
+  const handleCloseModal = (e) => {
+    console.log("dsfsdf");
+    setShowModal(false);
+  };
+
+  const authContext = useContext(AuthContext);
+
   //Primary color picker
   const [displayColorPickerPR, setDisplayColorPickerPR] = useState(false);
-  const [colorPR, setColorPR] = useState({
-    r: "41",
-    g: "12",
-    b: "19",
-    a: "1",
-  });
+  const [colorPR, setColorPR] = useState({hex: "#333"});
 
   //Background color picker
   const [displayColorPickerBG, setDisplayColorPickerBG] = useState(false);
   const [colorBG, setColorBG] = useState({
-    r: "41",
-    g: "12",
-    b: "19",
-    a: "1",
+    hex: "#000000",
   });
 
   //Color picker style
   var styles = reactCSS({
     default: {
+      width: 500,
       colorPR: {
         width: "36px",
         height: "14px",
         borderRadius: "2px",
-        background: `rgba(${colorPR.r}, ${colorPR.g}, ${colorPR.b}, ${colorPR.a})`,
+        background: colorPR.hex,
       },
       colorBG: {
         width: "36px",
         height: "14px",
         borderRadius: "2px",
-        background: `rgba(${colorBG.r}, ${colorBG.g}, ${colorBG.b}, ${colorBG.a})`,
+        background: colorBG.hex,
       },
       swatch: {
         padding: "5px",
@@ -57,7 +77,14 @@ const Profile = () => {
       },
     },
   });
-
+  useEffect(() => {
+    ProfileService.getProfile().then((data) => {
+      console.log(data);
+      setProfile(data);
+      setColorPR({hex: data.primaryColor});
+      setColorBG({hex: data.backgroundColor});
+    });
+  }, []);
   // Primary color picker handlers
   const handleClickPR = () => {
     setDisplayColorPickerPR(!displayColorPickerPR);
@@ -69,11 +96,13 @@ const Profile = () => {
 
   const handleChangePR = (colorPR) => {
     setColorPR({
-      r: colorPR.rgb.r,
-      g: colorPR.rgb.g,
-      b: colorPR.rgb.b,
-      a: colorPR.rgb.a,
+      hex: colorPR.hex,
     });
+
+    setProfile((prevState) => ({
+      ...prevState,
+      primaryColor: colorPR.hex,
+    }));
   };
 
   // Background color picker handlers
@@ -86,21 +115,47 @@ const Profile = () => {
   };
 
   const handleChangeBG = (colorBG) => {
-    setColorBG({
-      r: colorBG.rgb.r,
-      g: colorBG.rgb.g,
-      b: colorBG.rgb.b,
-      a: colorBG.rgb.a,
-    });
+    setColorBG({hex: colorBG.hex});
+
+    setProfile((prevState) => ({
+      ...prevState,
+      backgroundColor: colorBG.hex,
+    }));
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(e);
+    ProfileService.updateProfile(profile).then((data) => {
+      console.log(data);
+      const message = data;
+      if (!message.msgError) {
+        setMessage(message);
+        //redirect to links page
+        /*    timerId = setTimeout(() => {
+          props.history.push("/links");
+        }, 3000); */
+      } else if (message.msgBody === "unauth") {
+        //maybe jwt expired or smthn
+        console.log(message);
+        setMessage(message);
+
+        authContext.setUser({username: ""});
+        authContext.setIsAuthenticated(false);
+        /*    timerId = setTimeout(() => {
+          props.history.push("/");
+        }, 3000); */
+      } else {
+        setMessage(message);
+      }
+    });
   };
 
   const onChange = (e) => {
-    console.log(e);
+    const {name, value} = e.target;
+    setProfile((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   return (
@@ -109,18 +164,26 @@ const Profile = () => {
         <div className="max-w-md w-full">
           <div>
             <h2 className="mt-8 text-center text-2xl leading-9 font-extrabold text-gray-900">
-              nAME GOES HERE
+              {!profile.displayName
+                ? "@" + profile.username
+                : profile.displayName}
             </h2>
           </div>
+
+          <AvatarModal
+            className="z-1"
+            show={showModal}
+            handleClose={handleCloseModal}
+          ></AvatarModal>
           <form
             className="bg-white rounded px-8 pt-6 pb-8 mb-4"
-            onSubmit={(event) => onSubmit(event)}
+            onSubmit={onSubmit}
           >
-            <div className="mb-4 items-center justify-center text-center ">
-              <span
-                className="fa-stack fa-2x absolute mt-16 ml-16 text-gray-800"
-                style={{fontSize: 12}}
-              >
+            <div
+              className="mb-4 items-center justify-center text-center cursor-pointer"
+              onClick={handleShowModal}
+            >
+              <span className="fa-stack fa-2x absolute mt-16 ml-16 text-gray-800 text-sm">
                 <i className="fas fa-circle fa-stack-2x "></i>
                 <i className="fas fa-upload fa-stack-1x fa-inverse"></i>
               </span>
@@ -129,22 +192,24 @@ const Profile = () => {
                 className="-ml-1  border-2 border-dotted p-1 inline-block h-24 w-24 rounded-full text-white shadow-solid"
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                 alt="user profile picture"
-                onChange={(event) => onChange(event)}
+                onChange={onChange}
               />
             </div>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
+                htmlFor="displayName"
               >
                 Display name
               </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
+                id="displayName"
+                name="displayName"
+                value={profile.displayName}
                 type="text"
                 placeholder="Add your display name"
-                onChange={(event) => onChange(event)}
+                onChange={onChange}
               />
             </div>
             <div className="mb-6">
@@ -157,9 +222,11 @@ const Profile = () => {
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="bio"
+                name="bio"
+                value={profile.bio}
                 type="text"
                 placeholder="Add your bio"
-                onChange={(event) => onChange(event)}
+                onChange={onChange}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -172,22 +239,13 @@ const Profile = () => {
                 </label>
 
                 <div>
-                  <div
-                    style={styles.swatch}
-                    onClick={(event) => handleClickPR(event)}
-                  >
+                  <div style={styles.swatch} onClick={handleClickPR}>
                     <div style={styles.colorPR} />
                   </div>
                   {displayColorPickerPR ? (
                     <div style={styles.popover}>
-                      <div
-                        style={styles.cover}
-                        onClick={(event) => handleClosePR(event)}
-                      />
-                      <SketchPicker
-                        color={colorPR}
-                        onChange={(event) => handleChangePR(event)}
-                      />
+                      <div style={styles.cover} onClick={handleClosePR} />
+                      <SketchPicker color={colorPR} onChange={handleChangePR} />
                     </div>
                   ) : null}
                 </div>
@@ -202,22 +260,13 @@ const Profile = () => {
                 </label>
 
                 <div>
-                  <div
-                    style={styles.swatch}
-                    onClick={(event) => handleClickBG(event)}
-                  >
+                  <div style={styles.swatch} onClick={handleClickBG}>
                     <div style={styles.colorBG} />
                   </div>
                   {displayColorPickerBG ? (
                     <div style={styles.popover}>
-                      <div
-                        style={styles.cover}
-                        onClick={(event) => handleCloseBG(event)}
-                      />
-                      <SketchPicker
-                        color={colorBG}
-                        onChange={(event) => handleChangeBG(event)}
-                      />
+                      <div style={styles.cover} onClick={handleCloseBG} />
+                      <SketchPicker color={colorBG} onChange={handleChangeBG} />
                     </div>
                   ) : null}
                 </div>

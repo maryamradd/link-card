@@ -1,7 +1,9 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
 const router = express.Router();
+
 const authenticate = require("../authenticate");
 const User = require("../models/user");
 const Link = require("../models/link");
@@ -37,6 +39,50 @@ router.get(
   }
 );
 
+router.get(
+  "/profile",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    User.findById({_id: req.user._id})
+      .select("-password -links -createdAt -updatedAt -__v -_id")
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch((err) =>
+        res.status(400).json({message: {msgBody: err, msgError: true}})
+      );
+  }
+);
+
+router.patch(
+  "/profile",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    User.findById({_id: req.user._id})
+      .then((user) => {
+        user.image = req.body.image;
+        user.avatarImage = req.body.avatarImage;
+        user.displayName = req.body.displayName;
+        user.bio = req.body.bio;
+        user.primaryColor = req.body.primaryColor;
+        user.backgroundColor = req.body.backgroundColor;
+        user.save((err) => {
+          if (err) {
+            res.status(500).json(err);
+          } else {
+            res.status(200).json({
+              message: {
+                msgBody: "Profile updated successfully!",
+                msgError: false,
+              },
+            });
+          }
+        });
+      })
+      .catch((err) => res.status(400).json(err));
+  }
+);
+
 // SIGNUP //
 
 router.post("/signup", async (req, res) => {
@@ -63,7 +109,7 @@ router.post("/signup", async (req, res) => {
   const newUser = new User({username, password: passwordHash});
 
   // store new user in db
-  const savedUser = await newUser.save((err) => {
+  await newUser.save((err) => {
     if (err)
       res
         .status(500)
@@ -73,11 +119,6 @@ router.post("/signup", async (req, res) => {
         message: {msgBody: "account successfully created", msgError: false},
       });
   });
-
-  // create jwt token
-  var token = authenticate.getToken({_id: savedUser._id});
-  // set cookie with token
-  res.cookie("access_token", token, {httpOnly: true, sameSite: true});
 });
 
 // LOGIN //
@@ -111,8 +152,6 @@ router.get(
 // SHAREABLE USER CARD //
 
 router.get("/:username", (req, res) => {
-  const username = req.params.username;
-  const queryUsername = "^" + username + "$";
   User.findOne({username: req.params.username})
     .then((user) => {
       res.status(200).json(user);
@@ -135,8 +174,6 @@ router.post(
           .status(500)
           .json({message: {msgBody: "Error has occured!", msgError: true}});
       else {
-        console.log(req.user);
-        console.log(req.user.links);
         req.user.links.push(link);
         req.user.save((err) => {
           if (err)
@@ -199,5 +236,12 @@ router.get(
     res.status(200).json({isAuthenticated: true, user: username});
   }
 );
+
+/* 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+  res.status(404).send('what???');
+});
+ */
 
 module.exports = router;

@@ -20,12 +20,32 @@ const userSchema = new Schema(
       trim: true,
     },
 
+    displayName: {
+      type: String,
+      default: "",
+    },
+
     bio: {
       type: String,
       default: "",
     },
 
     image: {
+      file: {type: String, default: ""},
+      mimetype: {type: String, default: ""},
+    },
+
+    avatarImage: {
+      type: Boolean,
+      default: true,
+    },
+
+    primaryColor: {
+      type: String,
+      default: "",
+    },
+
+    backgroundColor: {
       type: String,
       default: "",
     },
