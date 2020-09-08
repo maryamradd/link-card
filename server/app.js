@@ -12,6 +12,7 @@ app.use(cors());
 
 // routers
 const userRouter = require("./routes/user");
+const uploadRouter = require("./routes/uploadRouter");
 
 //load environment variables
 const hostname = process.env.HOST;
@@ -38,5 +39,6 @@ app.listen(port, hostname, () => {
 
 // routers setup
 app.use("/", userRouter);
+app.use("/profile/upload", uploadRouter);
 
 module.exports = app;
