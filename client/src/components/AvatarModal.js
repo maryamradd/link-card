@@ -1,93 +1,142 @@
 import React, {useState, useEffect} from "react";
 import AvatarEditor from "react-avatar-editor";
-
 import ProfileService from "./ProfileService";
-import AvatarUploadService from "./AvatarUploadService";
+import Message from "./Message";
 
 const AvatarModal = (props) => {
-  const [image, setImage] = useState(
-    "https://www.publicdomainpictures.net/pictures/320000/nahled/background-image.png"
-  );
-  const [imageStyle, setImageStyle] = useState(true);
-  const [scale, setScale] = useState(1);
+  const [message, setMessage] = useState(null);
+  const [image, setImage] = useState({file: "", filename: "", mimetype: ""});
+  const [imageStyle, setImageStyle] = useState(null);
   const [editor, setEditor] = useState(null);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({x: 0.5, y: 0.5});
+  const [borderRadius, setBorderRadius] = useState(null);
 
-  var borderRadius = imageStyle ? 110 : 0;
   useEffect(() => {
     ProfileService.getProfile().then((data) => {
-      //console.log(data);
-      //setImage(data.image.file);
-      //setImageStyle(data.avatarImage);
+      setImage({
+        file: data.image.file,
+        filename: "",
+        mimetype: data.image.mimetype,
+      });
+      setImageStyle(data.avatarImage);
     });
+
+    var borderRadius = imageStyle ? 110 : 0;
+    setBorderRadius(borderRadius);
     setEditor(editor);
   }, []);
 
+  // classname to show or hide modal
   const showHideClassName = props.show ? "block" : "hidden";
-  const onAvatarChange = (e) => {
-    setImageStyle(true);
-  };
-
-  const onBackgroundChange = (e) => {
-    setImageStyle(false);
-  };
 
   const handleNewImage = (e) => {
-    // console.log(e.target.files[0]);
-    setImage(e.target.files[0]);
-  };
-
-  const handleScale = (e) => {
-    const scale = parseFloat(e.target.value);
-    // console.log(scale);
-    setScale(scale);
+    if (e.target.files[0].size > 5000000) {
+      setMessage({msgBody: " Image size is too big!", msgError: true});
+      e.target.value = "";
+    } else {
+      setImage({
+        file: e.target.files[0],
+        filename: e.target.files[0].name,
+        mimetype: e.target.files[0].type,
+      });
+    }
   };
 
   const onClickRemove = (e) => {
     setImage("");
   };
 
-  const handleSave = (data) => {
-    data.preventDefault();
-    //console.log(data);
-    const img = editor.getImageScaledToCanvas().toDataURL();
-    console.log(img);
-    setImage(image);
+  // toggle between avatar or background image
+  const onAvatarChange = (e) => {
+    setBorderRadius(110);
+    setImageStyle(true);
+  };
+
+  const onBackgroundChange = (e) => {
+    setBorderRadius(0);
+    setImageStyle(false);
+  };
+
+  // set editor
+  const setEditorRef = (editor) => {
+    setEditor(editor);
+  };
+
+  // editor zoom handler
+  const handleScale = (e) => {
+    const scale = parseFloat(e.target.value);
     setScale(scale);
-    setImageStyle(imageStyle);
-    // props.handleClose;
-    console.log(image.name);
-    console.log(image.type);
-    const file = {file: image.name, mimetype: image.type};
-    AvatarUploadService.updateAvatar(file).then((data) => {
-      //  console.log(data);
+  };
+
+  // editor position handler
+  const handlePositionChange = (position) => {
+    setPosition(position);
+  };
+
+  // convert base64 to raw binary data held in a string
+  const dataURItoBlob = (dataURI) => {
+    var byteString = atob(dataURI.split(",")[1]);
+    // separate out the mime component
+    var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    // set the bytes of the buffer to the correct values
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    var blob = new Blob([ab], {type: mimeString});
+    return blob;
+  };
+
+  // image upload handler
+  const handleSave = (data) => {
+    // retrive DataURL from editor
+    const imgDataURL = editor.getImageScaledToCanvas().toDataURL();
+
+    // convert to blob
+    var newBlob = dataURItoBlob(imgDataURL);
+
+    // create formData object using fieldname, blob, filename
+    var newFD = new FormData();
+    newFD.append("imageFile", newBlob, image.filename);
+
+    // send formData object to backend to upload the image
+    ProfileService.updateImage(newFD).then((data) => {
+      setMessage(data.message);
+    });
+
+    // update the image stlye (avatar or backkground)
+    ProfileService.updateImageStlye({avatarImage: imageStyle}).then((data) => {
+      console.log(data);
     });
   };
-  const setEditorRef = (editor) => setEditor(editor);
+
   return (
-    <div className={showHideClassName}>
-      <div className="max-w-sm rounded overflow-hidden shadow-lg ">
-        <span
-          onClick={props.handleCloseModal}
-          className="float-right relative top-4 right-6 text-gray-300 text-xl font-extrabold cursor-pointer hover:text-cool-gray-600  focus:text-cool-gray-600"
-        >
-          &times;
-        </span>
-        <div className="px-6 py-4 ">
-          <form
-            encType="multipart/form-data"
-            method="patch"
-            onSubmit={handleSave}
+    <div
+      className={`flex  min-h-full items-center justify-center
+       bg-gray-50 py-12 px-4 sm:px-6 lg:px-6  ${showHideClassName}`}
+    >
+      <div className="max-w-md w-full ">
+        <div className="max-w-md w-full rounded overflow-hidden shadow-lg bg-white px-8 pt-4 pb-8 mb-4">
+          <span
+            onClick={props.handleClose}
+            className="float-right relative top-1 right-1 text-gray-300 text-xl font-extrabold cursor-pointer hover:text-cool-gray-600  focus:text-cool-gray-600"
           >
+            &times;
+          </span>
+          <div className="">
             <AvatarEditor
               className="m-auto"
               ref={setEditorRef}
-              image={image}
-              width={220}
-              height={220}
-              border={50}
+              image={image.file}
+              width={200}
+              height={200}
               color={[255, 255, 255, 0.6]} // RGBA
               scale={scale}
               borderRadius={borderRadius}
+              onPositionChange={handlePositionChange}
             />
             <div className="flex mb-6">
               <label className="flex-1 justify-center px-4 py-2 mr-2 border border-transparent text-sm text-center leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700">
@@ -144,11 +193,12 @@ const AvatarModal = (props) => {
             </div>
             <button
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
-              type="submit"
+              onClick={handleSave}
             >
               Save
             </button>
-          </form>
+            {message ? <Message message={message}></Message> : null}
+          </div>
         </div>
       </div>
     </div>

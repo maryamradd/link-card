@@ -60,12 +60,10 @@ router.patch(
   (req, res) => {
     User.findById({_id: req.user._id})
       .then((user) => {
-        user.image = req.body.image;
-        user.avatarImage = req.body.avatarImage;
-        user.displayName = req.body.displayName;
-        user.bio = req.body.bio;
-        user.primaryColor = req.body.primaryColor;
-        user.backgroundColor = req.body.backgroundColor;
+        user.displayName = req.body.displayName || user.displayName;
+        user.bio = req.body.bio || user.bio;
+        user.primaryColor = req.body.primaryColor || user.primaryColor;
+        user.backgroundColor = req.body.backgroundColor || user.backgroundColor;
         user.save((err) => {
           if (err) {
             res.status(500).json(err);

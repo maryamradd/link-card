@@ -9,38 +9,38 @@ import AvatarModal from "./AvatarModal";
 
 const Profile = () => {
   const [profile, setProfile] = useState({
+    image: "",
     displayName: "",
     bio: "",
     primaryColor: "",
     backgroundColor: "",
   });
+
   const [message, setMessage] = useState(null);
-  //modal handlers
+  const authContext = useContext(AuthContext);
+
+  // modal handlers
   const [showModal, setShowModal] = useState(false);
 
   const handleShowModal = (e) => {
-    console.log("dsfsdf");
     setShowModal(true);
   };
 
   const handleCloseModal = (e) => {
-    console.log("dsfsdf");
     setShowModal(false);
   };
 
-  const authContext = useContext(AuthContext);
-
-  //Primary color picker
+  // Primary color picker
   const [displayColorPickerPR, setDisplayColorPickerPR] = useState(false);
   const [colorPR, setColorPR] = useState({hex: "#333"});
 
-  //Background color picker
+  // Background color picker
   const [displayColorPickerBG, setDisplayColorPickerBG] = useState(false);
   const [colorBG, setColorBG] = useState({
     hex: "#000000",
   });
 
-  //Color picker style
+  // Color picker style
   var styles = reactCSS({
     default: {
       width: 500,
@@ -77,14 +77,16 @@ const Profile = () => {
       },
     },
   });
+
   useEffect(() => {
     ProfileService.getProfile().then((data) => {
-      console.log(data);
+      // console.log(data);
       setProfile(data);
       setColorPR({hex: data.primaryColor});
       setColorBG({hex: data.backgroundColor});
     });
   }, []);
+
   // Primary color picker handlers
   const handleClickPR = () => {
     setDisplayColorPickerPR(!displayColorPickerPR);
@@ -123,6 +125,14 @@ const Profile = () => {
     }));
   };
 
+  const onChange = (e) => {
+    const {name, value} = e.target;
+    setProfile((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
     ProfileService.updateProfile(profile).then((data) => {
@@ -150,14 +160,6 @@ const Profile = () => {
     });
   };
 
-  const onChange = (e) => {
-    const {name, value} = e.target;
-    setProfile((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   return (
     <>
       <div className="min-h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
@@ -183,14 +185,14 @@ const Profile = () => {
               className="mb-4 items-center justify-center text-center cursor-pointer"
               onClick={handleShowModal}
             >
-              <span className="fa-stack fa-2x absolute mt-16 ml-16 text-gray-800 text-sm">
+              <span className="fa-stack fa-2x absolute -z-100 mt-16 ml-16 text-gray-800 text-sm">
                 <i className="fas fa-circle fa-stack-2x "></i>
                 <i className="fas fa-upload fa-stack-1x fa-inverse"></i>
               </span>
 
               <img
                 className="-ml-1  border-2 border-dotted p-1 inline-block h-24 w-24 rounded-full text-white shadow-solid"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                src={profile.image.file}
                 alt="user profile picture"
                 onChange={onChange}
               />
@@ -289,6 +291,8 @@ const Profile = () => {
                 Save
               </button>
             </div>
+
+            {message ? <Message message={message}></Message> : null}
           </form>
         </div>
       </div>

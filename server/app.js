@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 require("dotenv").config();
 
 // express setup
@@ -14,7 +15,7 @@ app.use(cors());
 const userRouter = require("./routes/user");
 const uploadRouter = require("./routes/uploadRouter");
 
-//load environment variables
+// load environment variables
 const hostname = process.env.HOST;
 const port = process.env.PORT;
 
@@ -32,13 +33,16 @@ mongoose.connect(
   }
 );
 
-// start the server
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+// public directory for image uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // routers setup
 app.use("/", userRouter);
 app.use("/profile/upload", uploadRouter);
+
+// start the server
+app.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
 
 module.exports = app;
