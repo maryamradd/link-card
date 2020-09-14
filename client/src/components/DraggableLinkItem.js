@@ -1,19 +1,42 @@
-import React, {useState, useRef} from "react";
-
-import {Link} from "react-router-dom";
+import React, {useState, useContext} from "react";
+import UserLinksService from "./UserLinksService";
+import {Link, useHistory} from "react-router-dom";
+import {AuthContext} from "./AuthContext";
+import Message from "./Message";
 import LinkItem from "./LinkItem";
 
 // TODO detect click outside settings menu to hide it
+// TODO change  history.go(0) to smtn that rerenders links component
 
 const DraggableLinkItem = (props) => {
+  let history = useHistory();
   const [settingsOpen, setSettingsOpen] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [message, setMessage] = useState(null);
 
-  const editLinkHandler = () => {
-    //goto edit link page
+  const authContext = useContext(AuthContext);
+
+  const deleteLinkHandler = () => {
+    UserLinksService.deleteLink(props.link).then((data) => {
+      const message = data.message;
+      if (!message.msgError) {
+        setMessage(message);
+        setTimeout(() => {
+          history.go(0);
+        }, 3000);
+      } else if (message.msgBody === "Unauthorized") {
+        // if jwt expired or user is no longer authorized
+        setMessage(message);
+        authContext.setUser({username: ""});
+        authContext.setIsAuthenticated(false);
+        setTimeout(() => {
+          history.push("/");
+        }, 3000);
+      } else {
+        setMessage(message);
+      }
+    });
   };
-
-  const deleteLinkHandler = () => {};
 
   return (
     <>
@@ -41,6 +64,9 @@ const DraggableLinkItem = (props) => {
               Cancel
             </button>
           </div>
+        </div>
+        <div className="max-w-xs mt-4 mx-auto">
+          {message ? <Message message={message} /> : null}
         </div>
       </div>
       <div

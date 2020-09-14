@@ -191,18 +191,21 @@ router.post(
   }
 );
 
-// EDIT A LINK //
+/*
+    @route PATCH /editLink/:linkId
+    @desc edit a chosen link
+    @access private
+    
+*/
 
 router.patch(
   "/editLink/:linkId",
   passport.authenticate("jwt", {session: false}),
   (req, res) => {
-    console.log(req.params);
-    console.log(req.body);
     const linkId = req.params.linkId;
     User.findById({_id: req.user._id})
       .then((user) => {
-        user.links.forEach((link, index) => {
+        user.links.forEach((link) => {
           if (link._id == linkId) {
             link.url = req.body.url || link.url;
             link.title = req.body.title || link.title;
@@ -217,6 +220,45 @@ router.patch(
             res.status(200).json({
               message: {
                 msgBody: "Link updated successfully!",
+                msgError: false,
+              },
+            });
+          }
+        });
+      })
+      .catch((err) =>
+        res.status(400).json({message: {msgBody: err, msgError: true}})
+      );
+  }
+);
+
+/*
+    @route DELETE /deleteLink/:linkId
+    @desc delete a link
+    @access private
+    
+*/
+
+router.delete(
+  "/deleteLink/:linkId",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    const linkId = req.params.linkId;
+    User.findById({_id: req.user._id})
+      .then((user) => {
+        user.links.forEach((link, index) => {
+          if (link._id == linkId) {
+            user.links.splice(index, 1);
+          }
+        });
+
+        user.save((err) => {
+          if (err) {
+            res.status(500).json({message: {msgBody: err, msgError: true}});
+          } else {
+            res.status(200).json({
+              message: {
+                msgBody: "Link deleted successfully!",
                 msgError: false,
               },
             });

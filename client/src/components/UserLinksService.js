@@ -37,4 +37,16 @@ export default {
       }
     });
   },
+
+  deleteLink: (link) => {
+    return fetch(`/deleteLink/${link._id}`, {
+      method: "DELETE",
+    }).then((res) => {
+      if (res.status !== 401) {
+        return res.json().then((data) => data);
+      } else {
+        return {message: {msgBody: "Unauthorized"}, msgError: true};
+      }
+    });
+  },
 };
