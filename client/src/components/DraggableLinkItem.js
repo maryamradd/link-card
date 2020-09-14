@@ -1,4 +1,6 @@
 import React, {useState, useRef} from "react";
+
+import {Link} from "react-router-dom";
 import LinkItem from "./LinkItem";
 
 // TODO detect click outside settings menu to hide it
@@ -70,15 +72,16 @@ const DraggableLinkItem = (props) => {
             "z-40 mt-12 mr-6  w-22 rounded-md shadow-lg"
           }
         >
-          <div
-            className="py-1 px-4 rounded-t-md bg-white shadow-xs hover:bg-gray-50 cursor-pointer"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="user-menu"
-            onClick={editLinkHandler}
-          >
-            Edit
-          </div>
+          <Link to={{pathname: "/editLink/" + props.link._id}}>
+            <div
+              className="py-1 px-4 rounded-t-md bg-white shadow-xs hover:bg-gray-50 cursor-pointer"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu"
+            >
+              Edit
+            </div>
+          </Link>
           <div
             className="py-1 px-4 rounded-b-md bg-white shadow-xs hover:bg-gray-50 cursor-pointer text-red-600 font-semibold"
             role="menu"
