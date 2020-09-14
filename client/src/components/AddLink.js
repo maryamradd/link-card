@@ -57,12 +57,12 @@ const AddLink = () => {
   };
   return (
     <>
-      <div className="min-h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
+      <div className="min-h-full  flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
         <div className="max-w-md w-full">
           <div>
             {" "}
             <h2 className="my-8 text-center text-2xl leading-9 font-extrabold text-gray-900">
-              Add a new link to your card
+              Add a new link
             </h2>
           </div>
           <form
