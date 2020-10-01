@@ -115,91 +115,94 @@ const AvatarModal = (props) => {
 
   return (
     <div
-      className={`flex  min-h-full items-center justify-center
-       bg-gray-50 py-12 px-4 sm:px-6 lg:px-6  ${showHideClassName}`}
+      className={`absolute w-full max-w-md align-center z-50 
+       bg-gray-50 py-6 px-6 sm:px-6 lg:px-6  ${showHideClassName}`}
     >
-      <div className="max-w-md w-full ">
-        <div className="max-w-md w-full rounded overflow-hidden shadow-lg bg-white px-8 pt-4 pb-8 mb-4">
-          <span
-            onClick={props.handleClose}
-            className="float-right relative top-1 right-1 text-gray-300 text-xl font-extrabold cursor-pointer hover:text-cool-gray-600  focus:text-cool-gray-600"
-          >
-            &times;
-          </span>
-          <div className="">
-            <AvatarEditor
-              className="m-auto"
-              ref={setEditorRef}
-              image={image.file}
-              width={200}
-              height={200}
-              color={[255, 255, 255, 0.6]} // RGBA
-              scale={scale}
-              borderRadius={borderRadius}
-              onPositionChange={handlePositionChange}
-            />
-            <div className="flex mb-6">
-              <label className="flex-1 justify-center px-4 py-2 mr-2 border border-transparent text-sm text-center leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700">
-                <input
-                  className="hidden"
-                  type="file"
-                  name="imageFile"
-                  onChange={handleNewImage}
-                />
-                Upload
-              </label>
-              <button
-                className="flex-1 justify-center px-4 py-2 ml-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red active:bg-red-700"
-                onClick={onClickRemove}
-              >
-                Remove
-              </button>
-            </div>
-            <div className="mt-6 text-gray-700">Style your image:</div>{" "}
-            <div className="mt-4 mb-6 text-center ">
-              <div className="mt-4 mb-4">
-                <span className="mr-2 text-md  font-medium">Zoom: </span>
-                <input
-                  name="scale"
-                  type="range"
-                  onChange={handleScale}
-                  min="0.1"
-                  max="2"
-                  step="0.01"
-                  defaultValue="1"
-                />
-              </div>
-
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio"
-                  name="imageStyle"
-                  value="avatar"
-                  onChange={onAvatarChange}
-                />
-                <span className="ml-2 text-md  font-medium">Avatar</span>
-              </label>
-              <label className="inline-flex items-center ml-6">
-                <input
-                  type="radio"
-                  className="form-radio"
-                  name="imageStyle"
-                  value="background"
-                  onChange={onBackgroundChange}
-                />
-                <span className="ml-2 text-md  font-medium">Background</span>
-              </label>
-            </div>
-            <button
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
-              onClick={handleSave}
+      <div className="absolute w-full left-0 rounded-lg overflow-hidden shadow-lg bg-white px-6 pt-4 pb-6">
+        <span
+          onClick={props.handleClose}
+          className="float-right relative top-1 right-1 text-gray-300 text-xl font-extrabold cursor-pointer hover:text-cool-gray-600  focus:text-cool-gray-600"
+        >
+          &times;
+        </span>
+        <div className="mb-2">
+          <AvatarEditor
+            className="m-auto"
+            ref={setEditorRef}
+            image={image.file}
+            width={200}
+            height={200}
+            color={[255, 255, 255, 0.6]} // RGBA
+            scale={scale}
+            borderRadius={borderRadius}
+            onPositionChange={handlePositionChange}
+          />
+          <div className="flex mb-6">
+            <label
+              className="flex-1 justify-center px-4 py-2 mr-2 border border-transparent text-sm 
+              text-center leading-5 font-medium rounded-md text-white bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-violet active:bg-violet-700"
             >
-              Save
+              <input
+                className="hidden"
+                type="file"
+                name="imageFile"
+                onChange={handleNewImage}
+              />
+              Upload
+            </label>
+            <button
+              className="flex-1 justify-center px-4 py-2 ml-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red active:bg-red-700"
+              onClick={onClickRemove}
+            >
+              Remove
             </button>
-            {message ? <Message message={message}></Message> : null}
           </div>
+          <div className="mt-6 text-gray-700">Style your image:</div>{" "}
+          <div className="mt-4 mb-6 text-center ">
+            <div className="mt-4 mb-4">
+              <span className="mr-2 text-md font-medium">Zoom: </span>
+              <input
+                name="scale"
+                type="range"
+                onChange={handleScale}
+                min="0.1"
+                max="2"
+                step="0.01"
+                defaultValue="1"
+                className="bg-red-500"
+              />
+            </div>
+
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                className="form-radio text-cyan-600"
+                name="imageStyle"
+                value="avatar"
+                onChange={onAvatarChange}
+              />
+              <span className="ml-2 text-md  font-medium">Avatar</span>
+            </label>
+            <label className="inline-flex items-center ml-6">
+              <input
+                type="radio"
+                className="form-radio  text-cyan-600"
+                name="imageStyle"
+                value="background"
+                onChange={onBackgroundChange}
+              />
+              <span className="ml-2 text-md  font-medium">Background</span>
+            </label>
+          </div>
+          <button
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium 
+              rounded-md text-white bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-violet active:bg-violet-700"
+            onClick={handleSave}
+          >
+            Save
+          </button>
         </div>
+        {message ? <Message message={message}></Message> : null}
       </div>
     </div>
   );

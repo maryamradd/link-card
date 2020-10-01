@@ -1,4 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
+
+import {useHistory} from "react-router-dom";
 import {AuthContext} from "./AuthContext";
 import Message from "./Message";
 import ProfileService from "./ProfileService";
@@ -8,8 +10,9 @@ import {SketchPicker} from "react-color";
 import AvatarModal from "./AvatarModal";
 
 const Profile = () => {
+  let history = useHistory();
   const [profile, setProfile] = useState({
-    image: "",
+    image: {file: "uploads\\default.png"},
     displayName: "",
     bio: "",
     primaryColor: "",
@@ -136,24 +139,17 @@ const Profile = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     ProfileService.updateProfile(profile).then((data) => {
-      console.log(data);
-      const message = data;
+      const message = data.message;
       if (!message.msgError) {
         setMessage(message);
-        //redirect to links page
-        /*    timerId = setTimeout(() => {
-          props.history.push("/links");
-        }, 3000); */
-      } else if (message.msgBody === "unauth") {
-        //maybe jwt expired or smthn
-        console.log(message);
+      } else if (message.msgBody === "Unauthorized") {
+        // if jwt expired or user is no longer authorized
         setMessage(message);
-
         authContext.setUser({username: ""});
         authContext.setIsAuthenticated(false);
-        /*    timerId = setTimeout(() => {
-          props.history.push("/");
-        }, 3000); */
+        setTimeout(() => {
+          history.push("/");
+        }, 3000);
       } else {
         setMessage(message);
       }
@@ -162,15 +158,13 @@ const Profile = () => {
 
   return (
     <>
-      <div className="min-h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
+      <div className="min-h-full z-0 flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-6">
         <div className="max-w-md w-full">
-          <div>
-            <h2 className="mt-8 text-center text-2xl leading-9 font-extrabold text-gray-900">
-              {!profile.displayName
-                ? "@" + profile.username
-                : profile.displayName}
-            </h2>
-          </div>
+          <h2 className="mt-8 text-center text-2xl leading-9 font-extrabold text-gray-900">
+            {!profile.displayName
+              ? "@" + profile.username
+              : profile.displayName}
+          </h2>
 
           <AvatarModal
             className="z-1"
@@ -178,14 +172,14 @@ const Profile = () => {
             handleClose={handleCloseModal}
           ></AvatarModal>
           <form
-            className="bg-white rounded px-8 pt-6 pb-8 mb-4"
+            className="bg-white rounded-lg px-8 pt-6 pb-8 mt-6 mb-4"
             onSubmit={onSubmit}
           >
             <div
               className="mb-4 items-center justify-center text-center cursor-pointer"
               onClick={handleShowModal}
             >
-              <span className="fa-stack fa-2x absolute -z-100 mt-16 ml-16 text-gray-800 text-sm">
+              <span className="fa-stack fa-2x absolute mt-16 ml-16 text-gray-800 text-sm">
                 <i className="fas fa-circle fa-stack-2x "></i>
                 <i className="fas fa-upload fa-stack-1x fa-inverse"></i>
               </span>
@@ -205,7 +199,7 @@ const Profile = () => {
                 Display name
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="displayName"
                 name="displayName"
                 value={profile.displayName}
@@ -222,7 +216,7 @@ const Profile = () => {
                 Bio
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="bio"
                 name="bio"
                 value={profile.bio}
@@ -278,7 +272,7 @@ const Profile = () => {
             <div className="flex items-center justify-center mb-4">
               <button
                 /* onclick open userpage */
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:border-cyan-700 focus:shadow-outline-cyan active:bg-cyan-700"
               >
                 Preview
               </button>
@@ -286,14 +280,13 @@ const Profile = () => {
             <div className="flex items-center justify-center">
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-violet active:bg-violet-700"
               >
                 Save
               </button>
             </div>
-
-            {message ? <Message message={message}></Message> : null}
           </form>
+          {message ? <Message message={message}></Message> : null}
         </div>
       </div>
     </>
