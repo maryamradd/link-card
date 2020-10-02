@@ -46,13 +46,13 @@ const DraggableLinkItem = (props) => {
           "z-50 w-full h-full overflow-auto left-0 top-0 pt-60 bg-gray-50 bg-opacity-75"
         }
       >
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 max-w-xs my-0 mx-auto">
-          <div className="mb-6">Are you sure you want to delete this link?</div>
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 max-w-xs my-0 mx-auto"><h3 class="text-lg leading-6 font-medium text-gray-900">
+              Delete Link
+            </h3>
+          <p className="mt-4 mb-6 text-gray-600">Are you sure you want to delete this link?</p>
           <div className="flex items-center justify-between">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 
-          rounded focus:outline-none focus:shadow-outline"
-              onClick={deleteLinkHandler}
+              className="px-4 py-2 rounded bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red" onClick={deleteLinkHandler}
             >
               Delete
             </button>
