@@ -36,7 +36,7 @@ const EditLink = (props) => {
         //redirect to links page
         setTimeout(() => {
           history.push("/links");
-        }, 3000);
+        }, 2500);
       } else if (message.msgBody === "Unauthorized") {
         // if jwt expired or user is no longer authorized
         setMessage(message);
@@ -44,7 +44,7 @@ const EditLink = (props) => {
         authContext.setIsAuthenticated(false);
         setTimeout(() => {
           history.push("/");
-        }, 3000);
+        }, 2500);
       } else {
         setMessage(message);
       }

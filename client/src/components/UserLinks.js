@@ -48,8 +48,8 @@ const UserLinks = () => {
           <h2 className="mt-4 mb-6  text-center text-3xl leading-9 font-extrabold text-gray-900">
             Your Links
           </h2>
-          <p className="mt-2 text-center text-sm leading-5 text-gray-600">
-            {!userLinks.length === 0 ? "You don't have any links yet" : ""}
+          <p className="my-6 text-center text-md leading-5 text-gray-600">
+            {userLinks.length === 0 ? "You don't have any links yet" : ""}
           </p>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
