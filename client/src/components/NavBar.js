@@ -1,15 +1,25 @@
-import React, {useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {AuthContext} from "./AuthContext";
 import AuthService from "./AuthService";
 
+import ProfileService from "./ProfileService";
 const NavBar = (props) => {
   const {isAuthenticated, user, setIsAuthenticated, setUser} = useContext(
     AuthContext
   );
   //var isAuthenticated = true;
-  const [navbarOpen, setNavbarOpen] = React.useState(false);
-  const [profileOpen, setProfileOpen] = React.useState(false);
+  const [navbarOpen, setNavbarOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [avatar, setAvatar] = useState("uploads\\default.png");
+
+  useEffect(() => {
+    ProfileService.getProfile().then((data) => {
+      if (isAuthenticated) {
+        setAvatar(data.image.file);
+      }
+    });
+  }, []);
 
   // Navbar that displays if the user is not registred/logged in
   const unauthnticatedNavbar = () => {
@@ -23,15 +33,15 @@ const NavBar = (props) => {
                   <div className="flex"></div>
                   <img
                     className="h-8 w-auto sm:h-10"
-                    src="https://tailwindui.com/img/logos/workflow-mark-on-white.svg"
-                    alt="Workflow"
+                    src="/logo192_2.png"
+                    alt="app logo"
                   />
                 </Link>
               </div>
               <div className="-mr-2 -my-2 md:hidden">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
                 >
                   <svg
                     className="h-6 w-6"
@@ -59,7 +69,7 @@ const NavBar = (props) => {
                   <Link to="/signup">
                     <div
                       className="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium 
-                    rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150"
+                    rounded-md text-white bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-indigo active:bg-violet-700"
                     >
                       Sign up
                     </div>
@@ -71,21 +81,21 @@ const NavBar = (props) => {
 
           {/* Mobile navbar */}
           <div className="absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
-            <div className="rounded-lg  ">
-              <div className="rounded-lg  bg-white divide-y-2 divide-gray-50">
+            <div className="rounded-lg">
+              <div className="rounded-lg bg-white divide-y-2 divide-gray-50">
                 <div className="pt-5 pb-6 px-5 space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <img
                         className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/workflow-mark-on-white.svg"
-                        alt="Workflow"
+                        src="/logo192_2.png"
+                        alt="app logo"
                       />
                     </div>
                     <div className="-mr-2">
                       <button
                         type="button"
-                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
                         onClick={() => setNavbarOpen(!navbarOpen)}
                       >
                         <svg
@@ -113,17 +123,20 @@ const NavBar = (props) => {
                     <span className="w-full flex rounded-md shadow-sm">
                       <Link
                         to="/signup"
-                        className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150"
+                        className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white  bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-violet active:bg-violet-700"
+                        onClick={() => setNavbarOpen(!navbarOpen)}
                       >
                         Sign up
                       </Link>
                     </span>
                     <p className="text-center text-base leading-6 font-medium text-gray-500">
-                      Existing customer?
+                      Existing user?
                       <Link
                         to="/login"
-                        className="text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+                        className="text-violet-600 hover:text-violet-500"
+                        onClick={() => setNavbarOpen(!navbarOpen)}
                       >
+                        {" "}
                         Log in
                       </Link>
                     </p>
@@ -142,6 +155,7 @@ const NavBar = (props) => {
       if (data.success) {
         setUser(data.user);
         setIsAuthenticated(false);
+        //redirect to home page
       }
     });
   };
@@ -154,18 +168,18 @@ const NavBar = (props) => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
               <div className="lg:w-0 lg:flex-1">
-                <Link to="/" className="flex">
+                <Link to="/">
                   <img
                     className="h-8 w-auto sm:h-10"
-                    src="https://tailwindui.com/img/logos/workflow-mark-on-white.svg"
-                    alt="Workflow"
+                    src="/logo192_2.png"
+                    alt="app logo"
                   />
                 </Link>
               </div>
               <div className="-mr-2 -my-2 md:hidden">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
                 >
                   <svg
                     className="h-6 w-6"
@@ -185,31 +199,34 @@ const NavBar = (props) => {
               <nav className="hidden md:flex space-x-10">
                 <NavLink
                   to="/profile"
-                  activeClassName="bg-blue-700"
-                  className=" text-base leading-6 font-medium text-gray-500 hover:text-gray-200 focus:outline-none focus:text-red-900 transition ease-in-out duration-150"
+                  activeClassName="text-violet-700"
+                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
+                  onClick={() => setNavbarOpen(!navbarOpen)}
                 >
                   Profile
                 </NavLink>
 
-                <Link
+                <NavLink
                   to="/links"
-                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
+                  activeClassName="text-violet-700"
+                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
                 >
                   Links
-                </Link>
+                </NavLink>
 
-                <Link
+                <NavLink
                   to="/settings"
-                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150"
+                  activeClassName="text-violet-700"
+                  className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
                 >
                   Settings
-                </Link>
+                </NavLink>
               </nav>
               <div className="hidden md:flex items-center justify-end space-x-8 md:flex-1 lg:w-0">
                 <div className="ml-3 relative">
                   <div>
                     <button
-                      className="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-white transition duration-150 ease-in-out"
+                      className="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-white"
                       id="user-menu"
                       aria-label="User menu"
                       aria-haspopup="true"
@@ -217,8 +234,8 @@ const NavBar = (props) => {
                     >
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                        src={avatar}
+                        alt="User profile image"
                       />
                     </button>
                   </div>
@@ -230,7 +247,7 @@ const NavBar = (props) => {
                     }
                   >
                     <div
-                      className="py-1 rounded-md bg-white shadow-xs"
+                      className="py-1 px-4  rounded-md bg-white shadow-xs hover:bg-gray-50 cursor-pointer"
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu"
@@ -253,14 +270,14 @@ const NavBar = (props) => {
                     <div>
                       <img
                         className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/workflow-mark-on-white.svg"
-                        alt="Workflow"
+                        src="/logo192_2.png"
+                        alt="app logo"
                       />
                     </div>
                     <div className="-mr-2">
                       <button
                         type="button"
-                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
                         onClick={() => setNavbarOpen(!navbarOpen)}
                       >
                         <svg
@@ -286,30 +303,34 @@ const NavBar = (props) => {
                 >
                   <div className="py-6 px-5 space-y-6">
                     <div className="grid grid-cols-2 row-gap-4 col-gap-8">
-                      <Link
+                      <NavLink
                         to="/profile"
-                        className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                        activeClassName="text-violet-700"
+                        className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Profile
-                      </Link>
-                      <Link
+                      </NavLink>
+                      <NavLink
                         to="/links"
-                        className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                        activeClassName="text-violet-700"
+                        className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Links
-                      </Link>
-                      <Link
+                      </NavLink>
+                      <NavLink
                         to="/settings"
-                        className="text-base leading-6 font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                        activeClassName="text-violet-700"
+                        className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Settings
-                      </Link>
+                      </NavLink>
                     </div>
                     <div className="space-y-6">
                       <span className="w-full flex rounded-md shadow-sm">
                         <Link
                           to="/logout"
-                          className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150"
+                          activeClassName="text-violet-700"
+                          className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                         >
                           Log out
                         </Link>
