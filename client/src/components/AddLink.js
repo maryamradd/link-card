@@ -1,4 +1,5 @@
-import React, {useState, useContext, useRef} from "react";
+import React, {useState, useContext} from "react";
+import {useHistory} from "react-router-dom";
 import UserLinksService from "./UserLinksService";
 import {AuthContext} from "./AuthContext";
 import Message from "./Message";
@@ -7,34 +8,32 @@ import FontIconPicker from "@fonticonpicker/react-fonticonpicker";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.base-theme.react.css";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.material-theme.react.css";
 
-const AddLink = () => {
+const AddLink = (props) => {
+  let history = useHistory();
   const [link, setLink] = useState({url: "", title: "", icon: ""});
   const [message, setMessage] = useState(null);
 
   const authContext = useContext(AuthContext);
-  //var timerId = useRef(null);
 
   const onSubmit = (e) => {
     e.preventDefault();
     UserLinksService.createLink(link).then((data) => {
-      console.log(data);
-      const message = data;
+      //console.log(data);
+      const message = data.message;
       if (!message.msgError) {
         setMessage(message);
         //redirect to links page
-        /*    timerId = setTimeout(() => {
-          props.history.push("/links");
-        }, 3000); */
-      } else if (message.msgBody === "unauth") {
-        //maybe jwt expired or smthn
-        console.log(message);
+        setTimeout(() => {
+          history.push("/links");
+        }, 2500);
+      } else if (message.msgBody === "Unauthorized") {
+        // if jwt expired or user is no longer authorized
         setMessage(message);
-
         authContext.setUser({username: ""});
         authContext.setIsAuthenticated(false);
-        /*    timerId = setTimeout(() => {
-          props.history.push("/");
-        }, 3000); */
+        setTimeout(() => {
+          history.push("/");
+        }, 2500);
       } else {
         setMessage(message);
       }
@@ -77,7 +76,7 @@ const AddLink = () => {
                 Link
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="url"
                 type="url"
                 name="url"
@@ -94,7 +93,7 @@ const AddLink = () => {
                 Description
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="description"
                 type="text"
                 name="title"
@@ -123,7 +122,8 @@ const AddLink = () => {
             <div className="flex items-center justify-center">
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md
+                text-white bg-violet-600 hover:bg-violet-500 focus:outline-none focus:border-violet-700 focus:shadow-outline-violet active:bg-violet-700"
               >
                 Add
               </button>
