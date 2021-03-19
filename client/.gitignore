@@ -27,3 +27,4 @@ yarn-error.log*
 
 # remove unused tailwind styles until purged
 /src/assets/tailwind.css
+/src/assets/main.css
