@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from "react";
 import {Link} from "react-router-dom";
-import AuthService from "./AuthService";
+import AuthService from "../../services/auth/AuthService";
 import Message from "./Message";
 
 const Signup = (props) => {

@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import {DragDropContext} from "react-beautiful-dnd";
-import UserLinksService from "./UserLinksService";
-import Message from "./Message";
+import UserLinksService from "../../services/links/UserLinksService";
+import Message from "../ui/Message";
 import DraggableUserLinks from "./DraggableUserLinks";
 
 //TODO send new links order to backend

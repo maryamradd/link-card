@@ -1,12 +1,12 @@
 import React, {useState, useContext} from "react";
-import UserLinksService from "./UserLinksService";
+import UserLinksService from "../../services/links/UserLinksService";
 import {Link, useHistory} from "react-router-dom";
-import {AuthContext} from "./AuthContext";
-import Message from "./Message";
+import {AuthContext} from "../../services/auth/AuthContext";
+import Message from "../ui/Message";
 import LinkItem from "./LinkItem";
 
 // TODO detect click outside settings menu to hide it
-// TODO change  history.go(0) to smtn that rerenders links component
+// TODO change history.go(0)
 
 const DraggableLinkItem = (props) => {
   let history = useHistory();
@@ -46,13 +46,17 @@ const DraggableLinkItem = (props) => {
           "z-50 w-full h-full overflow-auto left-0 top-0 pt-60 bg-gray-50 bg-opacity-75"
         }
       >
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 max-w-xs my-0 mx-auto"><h3 class="text-lg leading-6 font-medium text-gray-900">
-              Delete Link
-            </h3>
-          <p className="mt-4 mb-6 text-gray-600">Are you sure you want to delete this link?</p>
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 max-w-xs my-0 mx-auto">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Delete Link
+          </h3>
+          <p className="mt-4 mb-6 text-gray-600">
+            Are you sure you want to delete this link?
+          </p>
           <div className="flex items-center justify-between">
             <button
-              className="px-4 py-2 rounded bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red" onClick={deleteLinkHandler}
+              className="px-4 py-2 rounded bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red"
+              onClick={deleteLinkHandler}
             >
               Delete
             </button>

@@ -1,19 +1,19 @@
 import React, {useState, useContext} from "react";
 import {useHistory} from "react-router-dom";
-import UserLinksService from "./UserLinksService";
-import {AuthContext} from "./AuthContext";
-import Message from "./Message";
-import * as iconDefs from "../assets/iconDefs";
+import UserLinksService from "../../services/links/UserLinksService";
+import {AuthContext} from "../../services/auth/AuthContext";
+import Message from "../ui/Message";
+import * as iconDefs from "../../assets/iconDefs";
 import FontIconPicker from "@fonticonpicker/react-fonticonpicker";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.base-theme.react.css";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.material-theme.react.css";
 
 const AddLink = (props) => {
   let history = useHistory();
-  const [link, setLink] = useState({url: "", title: "", icon: ""});
-  const [message, setMessage] = useState(null);
 
   const authContext = useContext(AuthContext);
+  const [link, setLink] = useState({url: "", title: "", icon: ""});
+  const [message, setMessage] = useState(null);
 
   const onSubmit = (e) => {
     e.preventDefault();

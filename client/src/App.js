@@ -1,15 +1,16 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import NavBar from "./components/NavBar";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import AddLink from "./components/AddLink";
-import UserLinkCard from "./components/UserLinkCard";
-import Footer from "./components/Footer";
-import UserLinks from "./components/UserLinks";
-import Profile from "./components/Profile";
-import EditLink from "./components/EditLink";
+import NavBar from "./components/shared/NavBar";
+import Home from "./components/ui/Home";
+import Login from "./components/ui/Login";
+import Signup from "./components/ui/Signup";
+import AddLink from "./components//links/AddLink";
+import Footer from "./components/shared/Footer";
+import UserLinks from "./components/links/UserLinks";
+import Profile from "./components/ui/Profile";
+import EditLink from "./components/links/EditLink";
+import Settings from "./components/ui/Settings";
+import AuthenticatedRoute from "./services/auth/AuthenticatedRoute";
 
 function App() {
   return (
@@ -20,11 +21,15 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Signup} />
-          <Route exact path="/links" component={UserLinks} />
-          <Route exact path="/add" component={AddLink} />
-          <Route exact path="/editLink/:linkId" component={EditLink} />
-          <Route exact path="/profile" component={Profile} />
-          <Route path="/:username" component={UserLinkCard} />
+          <AuthenticatedRoute exact path="/settings" component={Settings} />
+          <AuthenticatedRoute exact path="/links" component={UserLinks} />
+          <AuthenticatedRoute exact path="/add" component={AddLink} />
+          <AuthenticatedRoute
+            exact
+            path="/editLink/:linkId"
+            component={EditLink}
+          />
+          <AuthenticatedRoute exact path="/profile" component={Profile} />
         </Switch>
       </Router>
       <Footer></Footer>

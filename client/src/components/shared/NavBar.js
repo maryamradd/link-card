@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from "react";
 import {Link, NavLink} from "react-router-dom";
-import {AuthContext} from "./AuthContext";
-import AuthService from "./AuthService";
+import {AuthContext} from "../../services/auth/AuthContext";
+import AuthService from "../../services/auth/AuthService";
+import ProfileService from "../../services/ProfileService";
 
-import ProfileService from "./ProfileService";
 const NavBar = (props) => {
   const {isAuthenticated, user, setIsAuthenticated, setUser} = useContext(
     AuthContext
@@ -199,7 +199,7 @@ const NavBar = (props) => {
               <nav className="hidden md:flex space-x-10">
                 <NavLink
                   to="/profile"
-                  activeClassName="text-violet-700"
+                  activeclassname="text-violet-700"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
                   onClick={() => setNavbarOpen(!navbarOpen)}
                 >
@@ -208,7 +208,7 @@ const NavBar = (props) => {
 
                 <NavLink
                   to="/links"
-                  activeClassName="text-violet-700"
+                  activeclassname="text-violet-700"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
                 >
                   Links
@@ -216,7 +216,7 @@ const NavBar = (props) => {
 
                 <NavLink
                   to="/settings"
-                  activeClassName="text-violet-700"
+                  activeclassname="text-violet-700"
                   className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:text-violet-700"
                 >
                   Settings
@@ -305,21 +305,21 @@ const NavBar = (props) => {
                     <div className="grid grid-cols-2 row-gap-4 col-gap-8">
                       <NavLink
                         to="/profile"
-                        activeClassName="text-violet-700"
+                        activeclassname="text-violet-700"
                         className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Profile
                       </NavLink>
                       <NavLink
                         to="/links"
-                        activeClassName="text-violet-700"
+                        activeclassname="text-violet-700"
                         className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Links
                       </NavLink>
                       <NavLink
                         to="/settings"
-                        activeClassName="text-violet-700"
+                        activeclassname="text-violet-700"
                         className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                       >
                         Settings
@@ -329,7 +329,7 @@ const NavBar = (props) => {
                       <span className="w-full flex rounded-md shadow-sm">
                         <Link
                           to="/logout"
-                          activeClassName="text-violet-700"
+                          activeclassname="text-violet-700"
                           className="text-base leading-6 font-medium text-gray-500 hover:text-gray-400"
                         >
                           Log out

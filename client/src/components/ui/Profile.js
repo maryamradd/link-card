@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from "react";
 
 import {useHistory} from "react-router-dom";
-import {AuthContext} from "./AuthContext";
+import {AuthContext} from "../../services/auth/AuthContext";
 import Message from "./Message";
-import ProfileService from "./ProfileService";
+import ProfileService from "../../services/ProfileService";
 import reactCSS from "reactcss";
 import {SketchPicker} from "react-color";
 

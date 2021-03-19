@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from "react";
 import {useHistory} from "react-router-dom";
-import UserLinksService from "./UserLinksService";
-import {AuthContext} from "./AuthContext";
-import Message from "./Message";
-import * as iconDefs from "../assets/iconDefs";
+import UserLinksService from "../../services/links/UserLinksService";
+import {AuthContext} from "../../services/auth/AuthContext";
+import Message from "../ui/Message";
+import * as iconDefs from "../../assets/iconDefs";
 import FontIconPicker from "@fonticonpicker/react-fonticonpicker";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.base-theme.react.css";
 import "@fonticonpicker/react-fonticonpicker/dist/fonticonpicker.material-theme.react.css";

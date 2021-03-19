@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import AvatarEditor from "react-avatar-editor";
-import ProfileService from "./ProfileService";
+import ProfileService from "../../services/ProfileService";
 import Message from "./Message";
 
 const AvatarModal = (props) => {
@@ -31,6 +31,9 @@ const AvatarModal = (props) => {
   const showHideClassName = props.show ? "block" : "hidden";
 
   const handleNewImage = (e) => {
+    if (e.target.files[0].size === undefined) {
+      return;
+    }
     if (e.target.files[0].size > 5000000) {
       setMessage({msgBody: " Image size is too big!", msgError: true});
       e.target.value = "";
