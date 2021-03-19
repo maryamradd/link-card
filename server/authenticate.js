@@ -52,11 +52,9 @@ const opts = {
   secretOrKey: process.env.JWT_SECRET,
 };
 
-console.log(opts);
-
 exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    //check if user exists
+    // check if user exists
     User.findOne({_id: jwt_payload._id}, (err, user) => {
       if (err) {
         return done(err, false);
@@ -64,7 +62,7 @@ exports.jwtPassport = passport.use(
       if (user) {
         return done(null, user);
       } else {
-        //user doesn't exists
+        // user doesn't exists
         return done(null, false);
       }
     });

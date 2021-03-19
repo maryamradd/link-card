@@ -5,11 +5,14 @@ const linkSchema = new Schema({
   url: {
     type: String,
     required: true,
+    trim: true,
   },
-  description: {
+
+  title: {
     type: String,
     required: true,
   },
+
   icon: {
     type: String,
     default: "",
